@@ -9,7 +9,13 @@
 #include <QWidget>
 #include <QSyntaxHighlighter>
 #include <QPainter>
-
+#include "status.h"
+#include <QFile>
+#include <QProcess>
+#include <QFileInfo>
+#include <QDir>
+#include <QDateTime>
+#include "tools.h"
 typedef enum{
     BROWSE,
     EDIT,
@@ -24,6 +30,9 @@ public:
     void setMode(EditorMode mode);
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
+public slots:
+    Status SaveUserCode();
+
 
 protected:
     void resizeEvent(QResizeEvent *e) override;

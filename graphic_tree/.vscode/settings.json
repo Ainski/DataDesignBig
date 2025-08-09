@@ -1,0 +1,25 @@
+{
+    "files.associations": {
+        "chrono": "cpp",
+        "ranges": "cpp",
+        "variant": "cpp",
+        "regex": "cpp",
+        "xlocale": "cpp",
+        "xstring": "cpp",
+        "algorithm": "cpp",
+        "format": "cpp",
+        "xiosbase": "cpp",
+        "xutility": "cpp",
+        "filesystem": "cpp",
+        "xlocmon": "cpp",
+        "numbers": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp",
+        "stacktrace": "cpp",
+        "thread": "cpp",
+        "vector": "cpp",
+        "queue": "cpp",
+        "stack": "cpp",
+        "limits": "cpp"
+    }
+}

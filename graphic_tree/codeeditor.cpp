@@ -111,3 +111,116 @@ void CodeEditor::setMode(EditorMode mode)
         highlightCurrentLine();
     }
 }
+
+
+
+
+Status compileExternalCode(const QString &filename) {
+    QString sourceFile = filename;
+    QString outputFile;
+    QString compiler;
+    QStringList arguments;
+    QString logFile = "compile.log";
+
+    // 创建/清空日志文件
+    QFile log(logFile);
+    if (!log.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qCritical() << "Failed to create log file:" << logFile;
+        return Status::FILE_OPEN_WRONG;
+    }
+    log.close();
+    // 辅助函数：记录消息到日志和控制台
+    // 检查操作系统类型
+#ifdef Q_OS_WIN
+    outputFile = "code.exe";
+    compiler = "g++"; // 假设使用MinGW的g++
+    arguments << sourceFile << "-o" << outputFile;
+#elif defined(Q_OS_LINUX)
+    outputFile = "code";
+    compiler = "g++"; // Linux默认使用g++
+    arguments << sourceFile << "-o" << outputFile;
+#else
+    qCritical() << "Unsupported operating system";
+    return Status::COMPILE_ERROR;
+#endif
+
+    // 检查源文件是否存在
+    if (!QFileInfo::exists(sourceFile)) {
+        Tools::logMessage(logFile,"Source file not found: " + sourceFile);
+        return Status::FILE_OPEN_WRONG;
+    }
+
+    // 执行编译命令
+    QProcess compileProcess;
+    compileProcess.setProcessChannelMode(QProcess::MergedChannels);
+
+    // 启动编译进程
+    compileProcess.start(compiler, arguments);
+
+
+
+    if (!compileProcess.waitForStarted()) {
+        Tools::logMessage(logFile,"Failed to start compiler process: " + compiler);
+        return Status::COMPILE_ERROR;
+    }
+
+    // 实时捕获并记录编译输出
+    QObject::connect(&compileProcess, &QProcess::readyReadStandardOutput, [&]() {
+        QString output = compileProcess.readAllStandardOutput();
+        QFile log(logFile);
+        if (log.open(QIODevice::Append | QIODevice::Text)) {
+            QTextStream out(&log);
+            out << output;
+            log.close();
+        }
+    });
+
+    // 等待编译完成
+    if (!compileProcess.waitForFinished(30000)) { // 增加超时到30秒
+        if (compileProcess.state() == QProcess::Running) {
+            compileProcess.kill();
+            Tools::logMessage(logFile,"Compiler timed out after 30 seconds");
+        } else {
+            Tools::logMessage(logFile,"Compiler crashed unexpectedly");
+        }
+        return Status::COMPILE_ERROR;
+    }
+
+    // 检查编译结果
+    if (compileProcess.exitStatus() != QProcess::NormalExit ||
+        compileProcess.exitCode() != 0) {
+        Tools::logMessage(logFile,"Compilation failed with exit code: " +
+                   QString::number(compileProcess.exitCode()));
+        return Status::COMPILE_ERROR;
+    }
+
+    // 验证输出文件
+    if (!QFileInfo::exists(outputFile)) {
+        Tools::logMessage(logFile,"Output file not created: " + outputFile);
+        return Status::COMPILE_ERROR;
+    }
+
+    // 记录成功信息
+    Tools::logMessage(logFile,"Successfully compiled: " + QDir::toNativeSeparators(outputFile));
+    qDebug() << "Compilation log saved to:" << QDir::toNativeSeparators(logFile);
+    return Status::OK;
+}
+Status CodeEditor::SaveUserCode()
+{
+    QFile file("code.cpp");
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        qDebug()<<"Failed to open the file out.txt";
+        return Status::FILE_OPEN_WRONG;
+    }
+    QTextStream out(&file);
+    QTextDocument *doc = document();
+    int count=doc->blockCount();
+    for (int i=0;i<count;i++){
+        out<< doc->findBlockByNumber(i).text()<<endl;
+    }
+    file.close();
+    qDebug()<<"Code Saved Successed";
+
+    //尝试编译
+    return compileExternalCode("code.cpp");
+}
