@@ -5,66 +5,80 @@ CodeHighLighter::CodeHighLighter(QTextDocument *parent): QSyntaxHighlighter(pare
 {
     HighlightingRule rule;
 
-    //对于下面正则表达式，标记为紫色，类名称
+    // 类名和命名空间 - 深紫色
     classFormat.setFontWeight(QFont::Bold);
     classFormat.setForeground(Qt::darkMagenta);
-    rule.pattern = QRegExp("\\b[A-Za-z]+:\\b");
+    // 匹配类名 (class/struct关键字后的标识符)
+    rule.pattern = QRegExp("\\b(class|struct|enum)\\s+\\w+\\b");
     rule.format = classFormat;
     highlightingRules.append(rule);
-    rule.pattern = QRegExp("\\b[A-Za-z]+\\.\\b");
+    // 匹配命名空间
+    rule.pattern = QRegExp("\\bnamespace\\s+\\w+\\b");
     rule.format = classFormat;
     highlightingRules.append(rule);
 
-    //字符串，标记深红色
+    // 字符串 - 深红色
     quotationFormat.setForeground(Qt::darkRed);
-    rule.pattern = QRegExp("\".*\"");
+    // 双引号字符串 (支持转义字符)
+    rule.pattern = QRegExp("\"[^\"]*\"");
     rule.format = quotationFormat;
     highlightingRules.append(rule);
-    rule.pattern = QRegExp("'.*'");
+    // 单引号字符
+    rule.pattern = QRegExp("'[^']*'");
     rule.format = quotationFormat;
     highlightingRules.append(rule);
 
-    //函数标记为斜体蓝色
+    // 函数 - 斜体蓝色
     functionFormat.setFontItalic(true);
     functionFormat.setForeground(Qt::blue);
-    rule.pattern = QRegExp("\\b[A-Za-z0-9_]+(?=\\()");
+    // 匹配函数名 (后跟左括号)
+    rule.pattern = QRegExp("\\b\\w+(?=\\s*\\()");
     rule.format = functionFormat;
     highlightingRules.append(rule);
 
-    //关键字
+    // 关键字 - 深蓝色
     QStringList keywords = {
-        "and", "break", "do", "else", "elseif", "end", "false",
-        "for", "function", "if", "in", "local", "nil", "not", "or",
-        "repeat", "return", "then", "true", "unitl", "while", "goto"
+        "alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand", "bitor",
+        "bool", "break", "case", "catch", "char", "char8_t", "char16_t", "char32_t",
+        "class", "compl", "concept", "const", "consteval", "constexpr", "const_cast",
+        "continue", "co_await", "co_return", "co_yield", "decltype", "default", "delete",
+        "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", "extern",
+        "false", "float", "for", "friend", "goto", "if", "inline", "int", "long",
+        "mutable", "namespace", "new", "noexcept", "not", "not_eq", "nullptr", "operator",
+        "or", "or_eq", "private", "protected", "public", "register", "reinterpret_cast",
+        "requires", "return", "short", "signed", "sizeof", "static", "static_assert",
+        "static_cast", "struct", "switch", "template", "this", "thread_local", "throw",
+        "true", "try", "typedef", "typeid", "typename", "union", "unsigned", "using",
+        "virtual", "void", "volatile", "wchar_t", "while", "xor", "xor_eq"
     };
-    //对于下面关键字部分，标记为深蓝色
+
     keywordFormat.setForeground(Qt::darkBlue);
     keywordFormat.setFontWeight(QFont::Bold);
-    QStringList keywordPatterns;
-    for(int i=0; i<keywords.length(); i++)
-    {
-        QString pattern = "\\b" + keywords[i] + "\\b";
-        rule.pattern = QRegExp(pattern);
+    for(const QString &keyword : keywords) {
+        rule.pattern = QRegExp("\\b" + keyword + "\\b");
         rule.format = keywordFormat;
         highlightingRules.append(rule);
     }
 
-    //对于下面正则表达式，单行注释标记为绿色
+    // 预处理指令 - 紫红色
+    preprocessorFormat.setForeground(QColor(150, 0, 150)); // 深紫色
+    preprocessorFormat.setFontWeight(QFont::Bold);
+    rule.pattern = QRegExp("#\\s*\\w+\\b");
+    rule.format = preprocessorFormat;
+    highlightingRules.append(rule);
+
+    // 单行注释 - 绿色
     singleLineCommentFormat.setForeground(Qt::darkGreen);
     singleLineCommentFormat.setFontItalic(true);
-    //rule.pattern = QRegExp("//[^\n]*");
-    rule.pattern = QRegExp("--[^\n]*");
+    rule.pattern = QRegExp("//[^\n]*");
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
-    //对于多行注释
+    // 多行注释 /* ... */
     multiLineCommentFormat.setForeground(Qt::darkGreen);
     multiLineCommentFormat.setFontItalic(true);
-    //commentStartExpression = QRegExp("/\\*");
-    //commentEndExpression = QRegExp("\\*/");
-    //Lua 多行注释 --[[xx]]
-    commentStartExpression = QRegExp("--\\[\\[");
-    commentEndExpression = QRegExp("\\]\\]");
+    commentStartExpression = QRegExp("/\\*");
+    commentEndExpression = QRegExp("\\*/");
 }
 
 void CodeHighLighter::highlightBlock(const QString &text)
@@ -100,3 +114,4 @@ void CodeHighLighter::highlightBlock(const QString &text)
         startIndex = commentStartExpression.indexIn(text, startIndex + commentLength);
     }
 }
+

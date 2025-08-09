@@ -1,0 +1,10 @@
+release/codeeditor.o
+release/codehighlighter.o
+release/main.o
+release/mainwindow.o
+release/resultshower.o
+release/tools.o
+release/moc_codeeditor.o
+release/moc_codehighlighter.o
+release/moc_mainwindow.o
+release/moc_resultshower.o

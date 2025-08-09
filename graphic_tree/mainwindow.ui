@@ -14,15 +14,41 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="CodeEditor" name="CodeEditorUut" native="true">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>560</x>
-      <y>0</y>
-      <width>231</width>
-      <height>391</height>
+      <x>540</x>
+      <y>1</y>
+      <width>258</width>
+      <height>434</height>
      </rect>
     </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="CodeEditor" name="CodeEditorUut" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>200</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="TryToCompile">
+       <property name="text">
+        <string>尝试编译</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ResultShower" name="CompileResult">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -43,6 +69,11 @@
    <extends>QWidget</extends>
    <header location="global">codeeditor.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ResultShower</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">resultshower.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

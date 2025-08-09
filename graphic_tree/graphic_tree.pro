@@ -19,12 +19,17 @@ SOURCES += \
     codeeditor.cpp \
     codehighlighter.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    resultshower.cpp \
+    tools.cpp
 
 HEADERS += \
     codeeditor.h \
     codehighlighter.h \
-    mainwindow.h
+    mainwindow.h \
+    resultshower.h \
+    status.h \
+    tools.h
 
 FORMS += \
     mainwindow.ui

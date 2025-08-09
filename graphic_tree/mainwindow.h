@@ -2,7 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include "codeeditor.h"
+#include "codehighlighter.h"
+#include "status.h"
+#include "resultshower.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -15,7 +18,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private:
+protected:
+    CodeHighLighter *thehighlighter;
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

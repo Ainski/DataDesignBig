@@ -35,6 +35,7 @@ private:
     QTextCharFormat multiLineCommentFormat; //多行注释
     QTextCharFormat quotationFormat;        //字符串标识符
     QTextCharFormat functionFormat;         //方法标识符
+    QTextCharFormat preprocessorFormat;     //预处理指令
 };
 
 #endif // CODEHIGHLIGHTER_H

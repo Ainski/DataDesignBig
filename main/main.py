@@ -1,6 +1,5 @@
 from dsapi import *
 import re
-
 def call_dsapi(input_code):
 	prompt = "现在给你一个c++代码，请生成能够在任意时刻读取二叉树抽象结构的函数，示例如下，其中被注释掉的内容为希望生成的部分：\n\n"
 	prompt +='''
@@ -173,3 +172,9 @@ int main() {
 	pattern = r'```c\+\+.*?```'
 	ret = re.search(pattern, ret, re.DOTALL)
 	return ret
+if __name__ == '__main__':
+	f = open('code.cpp', 'r', encoding='utf-8')
+	input_code = f.read()
+	f.close()
+	output_code = call_dsapi(input_code)
+	f = open('output.txt', 'w', encoding='utf-8')
