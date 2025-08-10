@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     thehighlighter = new CodeHighLighter;
     thehighlighter->setDocument(ui->CodeEditorUut->document());
 
+    Tools::creatlog(logfile);
 
 
     connect(ui->TryToCompile, &QPushButton::clicked, [this]() {
@@ -22,17 +23,31 @@ MainWindow::MainWindow(QWidget *parent)
         Status res = ui->CodeEditorUut->SaveUserCode();
         if (res== Status::OK){
             ui->CodeEditorUut->setStyleSheet("background-color: green;");
-            ui->TryToCompile->setText("尝试编译");
+            ui->TryToCompile->setText("正在ai优化...");
+            ui->CompileResult->ShowResults(QString("compile.log"));
+            res = Tools::calldeepseekapi(QString("code.cpp"));
+            if (res== Status::OK){
+                ui->CodeEditorUut->setStyleSheet("background-color: green;");
+                ui->TryToCompile->setText("尝试编译");
+            }
+            else{
+                ui->CodeEditorUut->setStyleSheet("background-color: red;");
+                ui->TryToCompile->setText("ai优化失败，尝试重新编译");
+            }
+            ui->CompileResult->ShowResults(QString("compile.log"));
         }
         else{
             ui->CodeEditorUut->setStyleSheet("background-color: red;");
             ui->TryToCompile->setText("编译失败，尝试重新编译");
+            ui->CompileResult->ShowResults(QString("compile.log"));
         }
+
+
 
         // 操作完成后重新启用按钮
         ui->TryToCompile->setEnabled(true);
 
-        ui->CompileResult->ShowResults(QString("compile.log"));
+
     });
 
 }

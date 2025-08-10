@@ -5,7 +5,9 @@ enum class Status{
     FILE_OPEN_WRONG,
     COMPILE_ERROR,
     CANT_FIND_PYTHON,
-    UNKNOWN_SYSTEM
+    UNKNOWN_SYSTEM,
+    NETWORK_ERROR,
+    DEEPSEEK_ERROR
 };
 
 #endif // STATUS_H
