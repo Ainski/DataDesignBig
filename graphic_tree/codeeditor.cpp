@@ -133,9 +133,7 @@ Status CodeEditor::SaveUserCode()
     file.close();
     qDebug()<<"Code Saved Successed";
     Tools::logMessage(logfile,"Code Saved Successed");
-    Tools::logMessage(logfile,QString("=").repeated(20));
     Tools::logMessage(logfile,QString("正在尝试对源代码进行编译"));
-    Tools::logMessage(logfile,QString("=").repeated(20));
 
 
     //尝试编译

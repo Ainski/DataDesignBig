@@ -30,7 +30,7 @@ public:
     static Status calldeepseekapi(const QString& filename);
 };
 static const QString logfile = "compile.log";
-static const QString API_KEY = "sk-c354a83bfba3497e9cff29aa7c6d09f8"; // 替换为实际API密钥
+static const QString API_KEY = "sk-6df6f3dfb34a4d5bb35b6c454be9b300"; // 替换为实际API密钥
 static const QString API_URL = "https://api.deepseek.com/v1/chat/completions";
 
 #endif // TOOLS_H

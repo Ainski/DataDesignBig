@@ -382,7 +382,7 @@ Status Tools::calldeepseekapi(const QString& filename)
     QString content = messageObj["content"].toString();
 
     // 6. 提取C++代码块
-    QRegularExpression regex(R"(```c\+\+([\s\S]*?)```)");
+    QRegularExpression regex(R"(```cpp([\s\S]*?)```)");
     QRegularExpressionMatch match = regex.match(content);
 
     if (!match.hasMatch()) {
