@@ -249,6 +249,7 @@ Makefile: ../graphic_tree/graphic_tree.pro D:/QT/5.14.2/mingw73_32/mkspecs/win32
 		../graphic_tree/graphic_tree.pro \
 		D:/QT/5.14.2/mingw73_32/lib/Qt5Widgets.prl \
 		D:/QT/5.14.2/mingw73_32/lib/Qt5Gui.prl \
+		D:/QT/5.14.2/mingw73_32/lib/Qt5Network.prl \
 		D:/QT/5.14.2/mingw73_32/lib/Qt5Core.prl \
 		D:/QT/5.14.2/mingw73_32/lib/qtmain.prl \
 		D:/QT/5.14.2/mingw73_32/mkspecs/features/build_pass.prf
@@ -432,6 +433,7 @@ D:/QT/5.14.2/mingw73_32/mkspecs/features/lex.prf:
 ../graphic_tree/graphic_tree.pro:
 D:/QT/5.14.2/mingw73_32/lib/Qt5Widgets.prl:
 D:/QT/5.14.2/mingw73_32/lib/Qt5Gui.prl:
+D:/QT/5.14.2/mingw73_32/lib/Qt5Network.prl:
 D:/QT/5.14.2/mingw73_32/lib/Qt5Core.prl:
 D:/QT/5.14.2/mingw73_32/lib/qtmain.prl:
 D:/QT/5.14.2/mingw73_32/mkspecs/features/build_pass.prf:

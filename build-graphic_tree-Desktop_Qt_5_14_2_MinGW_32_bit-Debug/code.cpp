@@ -6,7 +6,7 @@
 //#include <fstream>
 using namespace std;
 
-// ¶ş²æÅÅĞòÊ÷½Úµã½á¹¹
+// äºŒå‰æ’åºæ ‘èŠ‚ç‚¹ç»“æ„
 struct BSTNode {
     int data;
     BSTNode* left;
@@ -14,7 +14,7 @@ struct BSTNode {
     BSTNode(int val) : data(val), left(nullptr), right(nullptr) {}
 };
 
-// ²åÈë½Úµãº¯Êı
+// æ’å…¥èŠ‚ç‚¹å‡½æ•°
 BSTNode* insertNode(BSTNode* root, int value) {
     if (root == nullptr) {
         return new BSTNode(value);
@@ -28,14 +28,14 @@ BSTNode* insertNode(BSTNode* root, int value) {
     return root;
 }
 
-// ²éÕÒ½Úµãº¯Êı
+// æŸ¥æ‰¾èŠ‚ç‚¹å‡½æ•°
 bool searchNode(BSTNode* root, int key) {
     if (root == nullptr) return false;
     if (root->data == key) return true;
     return key < root->data ? searchNode(root->left, key) : searchNode(root->right, key);
 }
 
-// ÕÒµ½×ÓÊ÷×îĞ¡Öµ½Úµã
+// æ‰¾åˆ°å­æ ‘æœ€å°å€¼èŠ‚ç‚¹
 BSTNode* minValueNode(BSTNode* node) {
     BSTNode* current = node;
     while (current && current->left != nullptr)
@@ -43,7 +43,7 @@ BSTNode* minValueNode(BSTNode* node) {
     return current;
 }
 
-// É¾³ı½Úµãº¯Êı
+// åˆ é™¤èŠ‚ç‚¹å‡½æ•°
 BSTNode* deleteNode(BSTNode* root, int key) {
     if (root == nullptr) return root;
 
@@ -54,7 +54,7 @@ BSTNode* deleteNode(BSTNode* root, int key) {
         root->right = deleteNode(root->right, key);
     }
     else {
-        // ½ÚµãÖ»ÓĞÒ»¸ö×Ó½Úµã»òÃ»ÓĞ×Ó½Úµã
+        // èŠ‚ç‚¹åªæœ‰ä¸€ä¸ªå­èŠ‚ç‚¹æˆ–æ²¡æœ‰å­èŠ‚ç‚¹
         if (root->left == nullptr) {
             BSTNode* temp = root->right;
             delete root;
@@ -66,7 +66,7 @@ BSTNode* deleteNode(BSTNode* root, int key) {
             return temp;
         }
 
-        // ½ÚµãÓĞÁ½¸ö×Ó½Úµã£ºÕÒµ½ÓÒ×ÓÊ÷µÄ×îĞ¡Öµ½Úµã
+        // èŠ‚ç‚¹æœ‰ä¸¤ä¸ªå­èŠ‚ç‚¹ï¼šæ‰¾åˆ°å³å­æ ‘çš„æœ€å°å€¼èŠ‚ç‚¹
         BSTNode* temp = minValueNode(root->right);
         root->data = temp->data;
         root->right = deleteNode(root->right, temp->data);
@@ -74,7 +74,7 @@ BSTNode* deleteNode(BSTNode* root, int key) {
     return root;
 }
 
-// ÖĞĞò±éÀú´òÓ¡£¨ÑéÖ¤BST½á¹¹£©
+// ä¸­åºéå†æ‰“å°ï¼ˆéªŒè¯BSTç»“æ„ï¼‰
 void inorderTraversal(BSTNode* root) {
     if (root != nullptr) {
         inorderTraversal(root->left);
@@ -82,7 +82,7 @@ void inorderTraversal(BSTNode* root) {
         inorderTraversal(root->right);
     }
 }
-//// ¸¨Öúº¯Êı£ºBFS±éÀúÊ÷²¢ÊÕ¼¯½ÚµãĞÅÏ¢ºÍ±ß
+//// è¾…åŠ©å‡½æ•°ï¼šBFSéå†æ ‘å¹¶æ”¶é›†èŠ‚ç‚¹ä¿¡æ¯å’Œè¾¹
 //void collectTreeInfo(BSTNode* root, int& nodeCount, vector<pair<int, int>>& edges) {
 //    if (!root) return;
 //
@@ -105,19 +105,19 @@ void inorderTraversal(BSTNode* root) {
 //    }
 //}
 //
-//// ½«¶ş²æÅÅĞòÊ÷Êä³öÎªÖ¸¶¨Í¼¸ñÊ½
+//// å°†äºŒå‰æ’åºæ ‘è¾“å‡ºä¸ºæŒ‡å®šå›¾æ ¼å¼
 //void printTreeAsGraph(BSTNode* root) {
 //    int nodeCount = 0;
 //    vector<pair<int, int>> edges;
 //
-//    // ÊÕ¼¯Ê÷µÄĞÅÏ¢
+//    // æ”¶é›†æ ‘çš„ä¿¡æ¯
 //    collectTreeInfo(root, nodeCount, edges);
 //    ofstream file("map.txt");
 //    if (!file.is_open()) {
-//        cerr << "ÎŞ·¨´ò¿ªÎÄ¼ş" << endl;
+//        cerr << "æ— æ³•æ‰“å¼€æ–‡ä»¶" << endl;
 //        exit(-1);
 //    }
-//    // Êä³öÍ¼¸ñÊ½
+//    // è¾“å‡ºå›¾æ ¼å¼
 //    file << nodeCount << " 0 0" << endl;
 //    for (auto& edge : edges) {
 //        file << edge.first << " " << edge.second << endl;
@@ -125,33 +125,33 @@ void inorderTraversal(BSTNode* root) {
 //    file.close();
 //    system("pause");
 //}
-// Ö÷º¯Êı
+// ä¸»å‡½æ•°
 int main() {
     BSTNode* root = nullptr;
     int values[] = { 1, 4, 2, 8, 5, 7, 11, 14, 99, 33 };
     int n = sizeof(values) / sizeof(values[0]);
 
-    // ²åÈëËùÓĞÖµ
+    // æ’å…¥æ‰€æœ‰å€¼
     for (int i = 0; i < n; i++) {
         root = insertNode(root, values[i]);
         //printTreeAsGraph(root);
     }
 
-    cout << "ÖĞĞò±éÀú½á¹û: ";
+    cout << "ä¸­åºéå†ç»“æœ: ";
     inorderTraversal(root);
     cout << endl;
 
-    // ²âÊÔ²éÕÒ¹¦ÄÜ
-    cout << "²éÕÒ 7: " << (searchNode(root, 7) ? "´æÔÚ" : "²»´æÔÚ") << endl;
-    cout << "²éÕÒ 99: " << (searchNode(root, 99) ? "´æÔÚ" : "²»´æÔÚ") << endl;
-    cout << "²éÕÒ 100: " << (searchNode(root, 100) ? "´æÔÚ" : "²»´æÔÚ") << endl;
+    // æµ‹è¯•æŸ¥æ‰¾åŠŸèƒ½
+    cout << "æŸ¥æ‰¾ 7: " << (searchNode(root, 7) ? "å­˜åœ¨" : "ä¸å­˜åœ¨") << endl;
+    cout << "æŸ¥æ‰¾ 99: " << (searchNode(root, 99) ? "å­˜åœ¨" : "ä¸å­˜åœ¨") << endl;
+    cout << "æŸ¥æ‰¾ 100: " << (searchNode(root, 100) ? "å­˜åœ¨" : "ä¸å­˜åœ¨") << endl;
 
-    // ²âÊÔÉ¾³ı¹¦ÄÜ
-    root = deleteNode(root, 8);  // É¾³ıÓĞÁ½¸ö×Ó½ÚµãµÄ½Úµã
-    root = deleteNode(root, 1);  // É¾³ıÖ»ÓĞÒ»¸ö×Ó½ÚµãµÄ½Úµã
-    root = deleteNode(root, 14); // É¾³ıÒ¶×Ó½Úµã
+    // æµ‹è¯•åˆ é™¤åŠŸèƒ½
+    root = deleteNode(root, 8);  // åˆ é™¤æœ‰ä¸¤ä¸ªå­èŠ‚ç‚¹çš„èŠ‚ç‚¹
+    root = deleteNode(root, 1);  // åˆ é™¤åªæœ‰ä¸€ä¸ªå­èŠ‚ç‚¹çš„èŠ‚ç‚¹
+    root = deleteNode(root, 14); // åˆ é™¤å¶å­èŠ‚ç‚¹
 
-    cout << "É¾³ı 8, 1, 14 ºóµÄÖĞĞò±éÀú: ";
+    cout << "åˆ é™¤ 8, 1, 14 åçš„ä¸­åºéå†: ";
     inorderTraversal(root);
     cout << endl;
 

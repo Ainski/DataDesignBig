@@ -6,6 +6,7 @@
 #include "codehighlighter.h"
 #include "status.h"
 #include "resultshower.h"
+#include "tools.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE

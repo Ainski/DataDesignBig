@@ -7,8 +7,6 @@ from openai import OpenAI
 API_URL = 'https://api.deepseek.com/'
 
 def call_deepseek_api(prompt):
-	# ret ='''{\n    "comment": [\n        {\n            "content": "不愧是ally推荐的，很好用，会继续回购",\n            "risk_level": "中风险",\n            "reason": "评论内容较为通用，缺乏具体产品细节（如保湿或定妆效果），仅泛泛提及\'好用\'和\'回购\'，且强调影响者推荐（ally），可能为刷单常见的模板式评论；但评论与产品相关，并非完全无意义或无关，因此风险等级中等。"\n        }\n    ]\n}'''
-	# return ret
 	"""
 	:param prompt: 用户的输入提示
 	:return: 如果调用成功，返回API响应和reasoning内容；否则，返回错误信息。
