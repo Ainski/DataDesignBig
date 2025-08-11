@@ -120,8 +120,6 @@ Status Tools::compileExternalCode(const QString &filename) {
 Status Tools::calldeepseekapi(const QString& filename)
 {
     // 1. 读取C++源代码文件
-    qDebug()<< QSslSocket::sslLibraryBuildVersionString();
-
     QFile inputFile(filename);
     if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug()<<QString( "无法打开输出文件:")+filename;
@@ -400,7 +398,7 @@ Status Tools::calldeepseekapi(const QString& filename)
     QString generatedCode = match.captured(1).trimmed();
 
     // 7. 保存生成的代码
-    QFile outputFile("output.txt");
+    QFile outputFile("output.cpp");
     if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qDebug()<<QString( "无法打开输出文件: output.cpp");
         logMessage(logfile,QString( "无法打开输出文件: output.cpp"));
@@ -408,6 +406,7 @@ Status Tools::calldeepseekapi(const QString& filename)
     }
 
     QTextStream out(&outputFile);
+    out.setCodec("UTF-8");  // 设置编码为UTF-8
     out << generatedCode;
     outputFile.close();
 

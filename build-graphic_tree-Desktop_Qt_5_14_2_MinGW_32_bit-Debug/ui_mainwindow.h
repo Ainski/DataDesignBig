@@ -26,11 +26,12 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout;
     CodeEditor *CodeEditorUut;
     QPushButton *TryToCompile;
     ResultShower *CompileResult;
+    ResultShower *AI_CodeShower;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -38,36 +39,40 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(800, 600);
+        MainWindow->resize(1419, 941);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        widget = new QWidget(centralwidget);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(540, 1, 258, 434));
-        verticalLayout = new QVBoxLayout(widget);
+        layoutWidget = new QWidget(centralwidget);
+        layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
+        layoutWidget->setGeometry(QRect(857, 0, 561, 891));
+        verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
-        CodeEditorUut = new CodeEditor(widget);
+        CodeEditorUut = new CodeEditor(layoutWidget);
         CodeEditorUut->setObjectName(QString::fromUtf8("CodeEditorUut"));
-        CodeEditorUut->setMinimumSize(QSize(0, 200));
+        CodeEditorUut->setMinimumSize(QSize(0, 500));
 
         verticalLayout->addWidget(CodeEditorUut);
 
-        TryToCompile = new QPushButton(widget);
+        TryToCompile = new QPushButton(layoutWidget);
         TryToCompile->setObjectName(QString::fromUtf8("TryToCompile"));
 
         verticalLayout->addWidget(TryToCompile);
 
-        CompileResult = new ResultShower(widget);
+        CompileResult = new ResultShower(layoutWidget);
         CompileResult->setObjectName(QString::fromUtf8("CompileResult"));
         CompileResult->setReadOnly(true);
 
         verticalLayout->addWidget(CompileResult);
 
+        AI_CodeShower = new ResultShower(centralwidget);
+        AI_CodeShower->setObjectName(QString::fromUtf8("AI_CodeShower"));
+        AI_CodeShower->setGeometry(QRect(50, 530, 801, 361));
+        AI_CodeShower->setReadOnly(true);
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 800, 26));
+        menubar->setGeometry(QRect(0, 0, 1419, 20));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));

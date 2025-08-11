@@ -131,11 +131,9 @@ Status CodeEditor::SaveUserCode()
         out<< doc->findBlockByNumber(i).text()<<endl;
     }
     file.close();
-    qDebug()<<"Code Saved Successed";
-    Tools::logMessage(logfile,"Code Saved Successed");
-    Tools::logMessage(logfile,QString("正在尝试对源代码进行编译"));
+
 
 
     //尝试编译
-    return Tools::compileExternalCode("code.cpp");
+    return Status::OK;
 }

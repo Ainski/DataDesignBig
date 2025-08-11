@@ -17,28 +17,48 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->TryToCompile, &QPushButton::clicked, [this]() {
         // 立即禁用按钮
+
         ui->TryToCompile->setEnabled(false);
-        ui->TryToCompile->setText("正在编译...");
-        // 执行耗时操作（如保存代码）
+        ui->TryToCompile->setText("正在保存...");
+        QApplication::processEvents(); //刷新界面
+
+
         Status res = ui->CodeEditorUut->SaveUserCode();
+        ui->TryToCompile->setEnabled(false);
         if (res== Status::OK){
-            ui->CodeEditorUut->setStyleSheet("background-color: green;");
-            ui->TryToCompile->setText("正在ai优化...");
+            qDebug()<<"Code Saved Successed";
+            Tools::logMessage(logfile,QString("代码保存成功"));
+            Tools::logMessage(logfile,QString("正在尝试对源代码进行编译"));
+            ui->TryToCompile->setText("正在编译...");
             ui->CompileResult->ShowResults(QString("compile.log"));
-            res = Tools::calldeepseekapi(QString("code.cpp"));
+            QApplication::processEvents(); //刷新界面
+            res = Tools::compileExternalCode("code.cpp");
+
             if (res== Status::OK){
                 ui->CodeEditorUut->setStyleSheet("background-color: green;");
-                ui->TryToCompile->setText("尝试编译");
+                ui->TryToCompile->setText("正在ai优化...");
+                ui->CompileResult->ShowResults(QString("compile.log"));
+                res = Tools::calldeepseekapi(QString("code.cpp"));
+                if (res== Status::OK){
+                    ui->CodeEditorUut->setStyleSheet("background-color: green;");
+                    ui->AI_CodeShower->ShowResults(QString("output.cpp"));
+                    ui->TryToCompile->setText("尝试编译");
+                }
+                else{
+                    ui->CodeEditorUut->setStyleSheet("background-color: red;");
+                    ui->TryToCompile->setText("ai优化失败，尝试重新编译");
+                }
+                ui->CompileResult->ShowResults(QString("compile.log"));
             }
             else{
                 ui->CodeEditorUut->setStyleSheet("background-color: red;");
-                ui->TryToCompile->setText("ai优化失败，尝试重新编译");
+                ui->TryToCompile->setText("编译失败，尝试重新编译");
+                ui->CompileResult->ShowResults(QString("compile.log"));
             }
-            ui->CompileResult->ShowResults(QString("compile.log"));
         }
         else{
             ui->CodeEditorUut->setStyleSheet("background-color: red;");
-            ui->TryToCompile->setText("编译失败，尝试重新编译");
+            ui->TryToCompile->setText("保存失败");
             ui->CompileResult->ShowResults(QString("compile.log"));
         }
 
