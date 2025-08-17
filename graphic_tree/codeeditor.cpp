@@ -115,25 +115,26 @@ void CodeEditor::setMode(EditorMode mode)
 
 
 
-Status CodeEditor::SaveUserCode()
+Status CodeEditor::SaveUserCode(const QString filename)
 {
-    QFile file("code.cpp");
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
-        qDebug()<<"Failed to open the file out.txt";
-        Tools::logMessage(logfile,"Failed to open the file out.txt");
-        return Status::FILE_OPEN_WRONG;
+    qDebug() << "SaveUserCode";
+
+    QFile file(filename);
+    // 关键修复：添加写入模式和文本模式
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "Failed to open file for writing";
+        return Status::FILE_OPEN_WRONG;  // 添加错误处理
     }
+
     QTextStream out(&file);
     out.setCodec("UTF-8");  // 设置编码为UTF-8
     QTextDocument *doc = document();
-    int count=doc->blockCount();
-    for (int i=0;i<count;i++){
-        out<< doc->findBlockByNumber(i).text()<<endl;
+    int count = doc->blockCount();
+
+    for (int i = 0; i < count; i++) {
+        out << doc->findBlockByNumber(i).text() << "\n";  // 改用\n提高效率
     }
-    file.close();
 
-
-
-    //尝试编译
+    file.close();  // 显式关闭（QFile析构时也会自动关闭）
     return Status::OK;
 }

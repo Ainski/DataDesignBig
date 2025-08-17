@@ -14,53 +14,98 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>857</x>
-      <y>0</y>
-      <width>561</width>
-      <height>891</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="CodeEditor" name="CodeEditorUut" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>500</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="TryToCompile">
-       <property name="text">
-        <string>尝试编译</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ResultShower" name="CompileResult">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="ResultShower" name="AI_CodeShower">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>530</y>
+      <x>20</x>
+      <y>490</y>
       <width>801</width>
       <height>361</height>
      </rect>
     </property>
     <property name="readOnly">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="CodeEditor" name="CodeEditorUut" native="true">
+    <property name="geometry">
+     <rect>
+      <x>858</x>
+      <y>1</y>
+      <width>559</width>
+      <height>500</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>500</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="ResultShower" name="CompileResult">
+    <property name="geometry">
+     <rect>
+      <x>858</x>
+      <y>585</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="SaveCode">
+    <property name="geometry">
+     <rect>
+      <x>858</x>
+      <y>507</y>
+      <width>80</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>保存代码</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="AIOptimize">
+    <property name="geometry">
+     <rect>
+      <x>858</x>
+      <y>559</y>
+      <width>80</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>AI优化</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="TryToCompile">
+    <property name="geometry">
+     <rect>
+      <x>858</x>
+      <y>533</y>
+      <width>80</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>编译检查</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="TryExecute">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>510</y>
+      <width>89</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>尝试执行</string>
     </property>
    </widget>
   </widget>

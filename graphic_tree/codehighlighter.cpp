@@ -68,14 +68,14 @@ CodeHighLighter::CodeHighLighter(QTextDocument *parent): QSyntaxHighlighter(pare
     highlightingRules.append(rule);
 
     // 单行注释 - 绿色
-    singleLineCommentFormat.setForeground(Qt::darkGreen);
+    singleLineCommentFormat.setForeground(Qt::gray);
     singleLineCommentFormat.setFontItalic(true);
     rule.pattern = QRegExp("//[^\n]*");
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
     // 多行注释 /* ... */
-    multiLineCommentFormat.setForeground(Qt::darkGreen);
+    multiLineCommentFormat.setForeground(Qt::gray);
     multiLineCommentFormat.setFontItalic(true);
     commentStartExpression = QRegExp("/\\*");
     commentEndExpression = QRegExp("\\*/");

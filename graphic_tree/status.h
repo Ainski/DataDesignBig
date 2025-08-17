@@ -7,7 +7,8 @@ enum class Status{
     CANT_FIND_PYTHON,
     UNKNOWN_SYSTEM,
     NETWORK_ERROR,
-    DEEPSEEK_ERROR
+    DEEPSEEK_ERROR,
+    FILE_DELETE_ERROR
 };
 
 #endif // STATUS_H

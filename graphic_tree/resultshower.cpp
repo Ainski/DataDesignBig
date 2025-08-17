@@ -1,5 +1,5 @@
 #include "resultshower.h"
-
+#include<QDebug>
 ResultShower::ResultShower(QWidget *parent) : QPlainTextEdit(parent)
 {
     this->setReadOnly(1);
@@ -16,7 +16,7 @@ void ResultShower::ShowResults(const QString filename)
         QMessageBox::warning(this, tr("File Error"), tr("File not found: %1").arg(filename));
         return;
     }
-
+    qDebug()<<"读取日志";
     QFile file(filename);
 
     // 尝试打开文件
@@ -36,6 +36,8 @@ void ResultShower::ShowResults(const QString filename)
 
     // 关闭文件
     file.close();
+    qDebug()<<"关闭日志";
+
 
     // 显示内容
 
