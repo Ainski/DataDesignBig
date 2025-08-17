@@ -2,22 +2,29 @@
 #include <QDebug>
 Tools::Tools()
 {
-
+    logShower=Q_NULLPTR;
 }
-Status Tools::logMessage(const QString &logFile,const QString& message) {
-    qCritical() << message;
+Tools::Tools(ResultShower *logShower)
+{
+    this->logShower=logShower;
+}
+Status Tools::logMessage(const QString& message,ResultShower* logShower,
+                         const QString logFile) {
+    qDebug() << message;
     QFile log(logFile);
+    if (logShower==Q_NULLPTR) logShower=this->logShower;
     if (log.open(QIODevice::Append | QIODevice::Text)) {
         QTextStream out(&log);
         out.setCodec("UTF-8");  // 设置编码为UTF-8
-        out << QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")
-            << message << "\n";
+        out << endl<<QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")
+            << message;
         log.close();
     }
     else{
         qDebug()<<logfile<<"can't open ";
         return Status::FILE_OPEN_WRONG;
     }
+
     return Status::OK;
 }
 
@@ -33,97 +40,119 @@ Status Tools::creatlog(const QString &logFile)
     return Status::OK;
 }
 
-Status Tools::compileExternalCode(const QString &filename) {
+Status Tools::compileExternalCode(const QString &filename,const QString&OutputFileName) {
+    qDebug() << "compile" << filename;
     QString sourceFile = filename;
     QString outputFile;
     QString compiler;
     QStringList arguments;
 
-    // 创建/清空日志文件
-    // 辅助函数：记录消息到日志和控制台
-    // 检查操作系统类型
 #ifdef Q_OS_WIN
-    outputFile = "code.exe";
-    compiler = "g++"; // 假设使用MinGW的g++
+    outputFile = OutputFileName;
+    compiler = "g++";
     arguments << sourceFile << "-o" << outputFile;
 #elif defined(Q_OS_LINUX)
     outputFile = "code";
-    compiler = "g++"; // Linux默认使用g++
+    compiler = "g++";
     arguments << sourceFile << "-o" << outputFile;
 #else
     qCritical() << "Unsupported operating system";
     return Status::COMPILE_ERROR;
 #endif
+    // 创建日志文件（提前打开避免频繁开关）
+    QFile logFile(logfile);
+    if (!logFile.open(QIODevice::Append | QIODevice::Text)) {
+        qWarning() << "Cannot open log file:" << logfile;
+        return Status::FILE_OPEN_WRONG;
+    }
+    QTextStream logStream(&logFile);
 
-    // 检查源文件是否存在
     if (!QFileInfo::exists(sourceFile)) {
-        Tools::logMessage(logfile,"Source file not found: " + sourceFile);
+        logStream <<QString('\n')<< QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")<<
+                     ("Source file not found: " + sourceFile);
         return Status::FILE_OPEN_WRONG;
     }
 
-    // 执行编译命令
     QProcess compileProcess;
     compileProcess.setProcessChannelMode(QProcess::MergedChannels);
 
-    // 启动编译进程
-    compileProcess.start(compiler, arguments);
 
 
+    // 关键优化：添加事件循环处理UI事件
+    QEventLoop eventLoop;
+    QTimer timeoutTimer;
+    timeoutTimer.setSingleShot(true);
 
-    if (!compileProcess.waitForStarted()) {
-        Tools::logMessage(logfile,"Failed to start compiler process: " + compiler);
-        return Status::COMPILE_ERROR;
-    }
-
-    // 实时捕获并记录编译输出
-    QObject::connect(&compileProcess, &QProcess::readyReadStandardOutput, [&]() {
-        QString output = compileProcess.readAllStandardOutput();
-        QFile log(logfile);
-        if (log.open(QIODevice::Append | QIODevice::Text)) {
-            QTextStream out(&log);
-            out << output;
-            log.close();
+    // 连接超时和完成信号
+    QObject::connect(&compileProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+                     &eventLoop, &QEventLoop::quit);
+    QObject::connect(&timeoutTimer, &QTimer::timeout, [&]() {
+        if (compileProcess.state() == QProcess::Running) {
+            compileProcess.kill();
+            logStream << QString('\n')<< QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")<<
+                         "Compiler timed out after 30 seconds\n";
+            eventLoop.quit();
         }
     });
 
-    // 等待编译完成
-    if (!compileProcess.waitForFinished(30000)) { // 增加超时到30秒
-        if (compileProcess.state() == QProcess::Running) {
-            compileProcess.kill();
-            Tools::logMessage(logfile,"Compiler timed out after 30 seconds");
-        } else {
-            Tools::logMessage(logfile,"Compiler crashed unexpectedly");
-        }
+    // 实时捕获输出
+    QObject::connect(&compileProcess, &QProcess::readyReadStandardOutput, [&]() {
+        logStream << compileProcess.readAllStandardOutput();
+        logStream.flush(); // 确保及时写入
+    });
+
+    // 启动编译进程
+    compileProcess.start(compiler, arguments);
+    if (!compileProcess.waitForStarted()) {
+        logStream << QString('\n')<< QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")<<
+                     "Failed to start compiler: " << compiler;
+        logFile.close();
         return Status::COMPILE_ERROR;
     }
 
-    // 检查编译结果
+    // 设置30秒超时
+    timeoutTimer.start(30000);
+    eventLoop.exec();
+
+    // 处理编译结果
+    const bool timedOut = !timeoutTimer.isActive();
+    timeoutTimer.stop();
+
+    if (timedOut) {
+        logFile.close();
+        return Status::COMPILE_ERROR;
+    }
+
     if (compileProcess.exitStatus() != QProcess::NormalExit ||
         compileProcess.exitCode() != 0) {
-        Tools::logMessage(logfile,"Compilation failed with exit code: " +
-                   QString::number(compileProcess.exitCode()));
+        logStream << QString('\n')<< QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")<<
+                     "Compilation failed. Exit code: "
+                  << compileProcess.exitCode();
+        logFile.close();
         return Status::COMPILE_ERROR;
     }
 
-    // 验证输出文件
     if (!QFileInfo::exists(outputFile)) {
-        Tools::logMessage(logfile,"Output file not created: " + outputFile);
+        logStream << QString('\n')<< QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")<<
+                     "Output file not created: " << outputFile;
+        logFile.close();
         return Status::COMPILE_ERROR;
     }
 
-    // 记录成功信息
-    Tools::logMessage(logfile,"Successfully compiled: " + QDir::toNativeSeparators(outputFile));
-    qDebug() << "Compilation log saved to:" << QDir::toNativeSeparators(logfile);
+    logStream << QString('\n')
+              << QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")
+              << "Compilation successful: " << outputFile;
+    logFile.close();
     return Status::OK;
 }
-
-Status Tools::calldeepseekapi(const QString& filename)
+Status Tools::calldeepseekapi(const QString& filename,const QString outfilename)
 {
+    qDebug()<<"calldeepseekapi";
     // 1. 读取C++源代码文件
     QFile inputFile(filename);
     if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug()<<QString( "无法打开输出文件:")+filename;
-        logMessage(logfile,QString( "无法打开输出文件:")+filename);
+        logMessage(QString( "无法打开输出文件:")+filename);
         return Status::FILE_OPEN_WRONG;
     }
     QString inputCode = inputFile.readAll();
@@ -335,7 +364,7 @@ Status Tools::calldeepseekapi(const QString& filename)
         QString error = "API调用失败: " + reply->errorString();
         reply->deleteLater();
         qDebug()<<error;
-        logMessage(logfile,error);
+        logMessage(error);
         return Status::NETWORK_ERROR;
     }
 
@@ -345,35 +374,35 @@ Status Tools::calldeepseekapi(const QString& filename)
 
     if (jsonResponse.isNull() || !jsonResponse.isObject()) {
         qDebug()<<QString( "无效的API响应格式");
-        logMessage(logfile,QString( "无效的API响应格式"));
+        logMessage(QString( "无效的API响应格式"));
         return Status::DEEPSEEK_ERROR;
     }
 
     QJsonObject responseObj = jsonResponse.object();
     if (!responseObj.contains("choices") || !responseObj["choices"].isArray()) {
         qDebug()<<QString( "API响应缺少choices字段");
-        logMessage(logfile,QString( "API响应缺少choices字段"));
+        logMessage(QString( "API响应缺少choices字段"));
         return Status::DEEPSEEK_ERROR;
     }
 
     QJsonArray choices = responseObj["choices"].toArray();
     if (choices.isEmpty()) {
         qDebug()<<QString( "API响应中没有结果");
-        logMessage(logfile,QString( "API响应中没有结果"));
+        logMessage(QString( "API响应中没有结果"));
         return Status::DEEPSEEK_ERROR;
     }
 
     QJsonObject firstChoice = choices.first().toObject();
     if (!firstChoice.contains("message") || !firstChoice["message"].isObject()) {
         qDebug()<<QString( "API响应缺少message字段");
-        logMessage(logfile,QString( "API响应缺少message字段"));
+        logMessage(QString( "API响应缺少message字段"));
         return Status::DEEPSEEK_ERROR;
     }
 
     QJsonObject messageObj = firstChoice["message"].toObject();
     if (!messageObj.contains("content") || !messageObj["content"].isString()) {
         qDebug()<<QString( "API响应缺少content字段");
-        logMessage(logfile,QString( "API响应缺少content字段"));
+        logMessage(QString( "API响应缺少content字段"));
         return Status::DEEPSEEK_ERROR;
     }
 
@@ -390,18 +419,17 @@ Status Tools::calldeepseekapi(const QString& filename)
     }
 
     if (!match.hasMatch()) {
-        qDebug()<<QString( "无法从响应中提取代码块");
-        logMessage(logfile,QString( "无法从响应中提取代码块"));
+        logMessage(QString( "无法从响应中提取代码块"));
         return Status::DEEPSEEK_ERROR;
     }
 
     QString generatedCode = match.captured(1).trimmed();
 
     // 7. 保存生成的代码
-    QFile outputFile("output.cpp");
+    QFile outputFile(outfilename);
     if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qDebug()<<QString( "无法打开输出文件: output.cpp");
-        logMessage(logfile,QString( "无法打开输出文件: output.cpp"));
+
+        logMessage(QString( "无法打开输出文件: ")+outfilename);
         return Status::FILE_OPEN_WRONG;
     }
 
@@ -410,7 +438,25 @@ Status Tools::calldeepseekapi(const QString& filename)
     out << generatedCode;
     outputFile.close();
 
-    qDebug()<<QString( "代码生成成功，已保存到 output.cpp");
-    logMessage(logfile,QString( "代码生成成功，已保存到 output.cpp"));
+    logMessage(QString( "代码生成成功，已保存到 "+outfilename));
     return Status::OK;
+}
+Status deleteFile(const QString &filePath) {
+    if (QFile::exists(filePath)) {
+        if(QFile::remove(filePath)){
+            qDebug()<<"The file "<<filePath<<"has been deleted";
+            return Status::OK;
+        }
+        return Status::FILE_DELETE_ERROR;
+    }
+    return (Status::FILE_DELETE_ERROR); // 文件不存在
+}
+Status Tools::ExecuteResult(const QString &filename,QPushButton* const &TryExecute)
+{
+    QProcess *process=new QProcess();
+    process->setProgram(filename);
+    process->
+
+    return Status::OK;
+
 }

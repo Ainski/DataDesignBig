@@ -2,6 +2,7 @@
 #define TOOLS_H
 
 #include "status.h"
+#include "resultshower.h"
 #include <QFile>
 #include <QProcess>
 #include <QFileInfo>
@@ -19,18 +20,22 @@
 #include <QEventLoop>
 #include <QTimer>
 #include <QSslSocket>
-
-class Tools
-{
-public:
-    Tools();
-    static Status logMessage(const QString &logfile,const QString& message);
-    static Status creatlog(const QString &logFile);
-    static Status compileExternalCode(const QString &filename);
-    static Status calldeepseekapi(const QString& filename);
-};
-static const QString logfile = "compile.log";
 static const QString API_KEY = "sk-6df6f3dfb34a4d5bb35b6c454be9b300"; // 替换为实际API密钥
 static const QString API_URL = "https://api.deepseek.com/v1/chat/completions";
+class Tools
+{
+private:
+    ResultShower* logShower;
+public:
+    Tools();
+    Tools(ResultShower* logShower);
+    Status logMessage(const QString& message,ResultShower* logShower=Q_NULLPTR,
+                             const QString logFile=logfile);
+    Status creatlog(const QString &logFile);
+    Status compileExternalCode(const QString &filename,const QString&OutputFileName);
+    Status calldeepseekapi(const QString& filename,const QString outfilename);
+    Status ExecuteResult(const QString &filename,QPushButton* const &TryExecute);
+};
+Status deleteFile(const QString &filePath);
 
 #endif // TOOLS_H

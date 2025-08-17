@@ -31,7 +31,7 @@ public:
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
 public slots:
-    Status SaveUserCode();
+    Status SaveUserCode(const QString filename="code.cpp");
 
 
 protected:

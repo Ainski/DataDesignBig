@@ -8,13 +8,15 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QFileInfo>
+const QString logfile = "compile.log";
+
 class ResultShower : public QPlainTextEdit
 {
     Q_OBJECT
 public:
     explicit ResultShower(QWidget *parent = nullptr);
 
-    void ShowResults(const QString filename);
+    void ShowResults(const QString filename= logfile);
 
 };
 

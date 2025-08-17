@@ -20,6 +20,7 @@ public:
     ~MainWindow();
 
 protected:
+    QVector<QString> files;
     CodeHighLighter *thehighlighter;
     Ui::MainWindow *ui;
 };
