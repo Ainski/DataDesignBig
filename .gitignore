@@ -1,0 +1,9 @@
+*.user
+build-*/
+*/debug/
+*/release/
+*.log
+.vscode/**
+main/config.py
+
+
