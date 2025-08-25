@@ -4,6 +4,10 @@ Tools::Tools()
 {
     logShower=Q_NULLPTR;
 }
+Tools::Tools(ResultShower *logShower)
+{
+    this->logShower = logShower;
+}
 
 Status Tools::logMessage(const QString& message,ResultShower* logShower,
                          const QString logFile) {

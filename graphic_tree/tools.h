@@ -31,6 +31,7 @@ private:
     ResultShower* logShower;
 public:
     Tools();
+    Tools(ResultShower* logShower);
     Status logMessage(const QString& message,ResultShower* logShower=Q_NULLPTR,
                              const QString logFile=logfile);
     Status creatlog(const QString &logFile);

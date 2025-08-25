@@ -17,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
     thehighlighter = new CodeHighLighter;
     thehighlighter->setDocument(ui->CodeEditorUut->document());
 
-    Tools tool;
     // 图形视图：放置在左上空白区，便于调试（挂到 centralwidget 上，避免被覆盖）
     graphView = new GraphView(ui->centralwidget);
     graphView->setGeometry(QRect(20, 20, 801, 450));
