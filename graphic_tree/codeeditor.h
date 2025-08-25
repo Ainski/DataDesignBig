@@ -16,12 +16,13 @@
 #include <QDir>
 #include <QDateTime>
 #include "tools.h"
+#include "resultshower.h"
 typedef enum{
     BROWSE,
     EDIT,
 }EditorMode;
 
-class CodeEditor : public QPlainTextEdit
+class CodeEditor : public ResultShower
 {
     Q_OBJECT
 

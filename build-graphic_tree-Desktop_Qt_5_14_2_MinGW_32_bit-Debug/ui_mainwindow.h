@@ -31,6 +31,10 @@ public:
     QPushButton *SaveCode;
     QPushButton *AIOptimize;
     QPushButton *TryToCompile;
+    QPushButton *TryExecute;
+    QPushButton *CompileAICode;
+    QPushButton *NextStep;
+    QPushButton *CutIn;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -51,7 +55,7 @@ public:
         CodeEditorUut->setMinimumSize(QSize(0, 500));
         CompileResult = new ResultShower(centralwidget);
         CompileResult->setObjectName(QString::fromUtf8("CompileResult"));
-        CompileResult->setGeometry(QRect(858, 585, 256, 192));
+        CompileResult->setGeometry(QRect(858, 585, 541, 281));
         CompileResult->setReadOnly(true);
         SaveCode = new QPushButton(centralwidget);
         SaveCode->setObjectName(QString::fromUtf8("SaveCode"));
@@ -62,10 +66,22 @@ public:
         TryToCompile = new QPushButton(centralwidget);
         TryToCompile->setObjectName(QString::fromUtf8("TryToCompile"));
         TryToCompile->setGeometry(QRect(858, 533, 80, 20));
+        TryExecute = new QPushButton(centralwidget);
+        TryExecute->setObjectName(QString::fromUtf8("TryExecute"));
+        TryExecute->setGeometry(QRect(980, 540, 89, 24));
+        CompileAICode = new QPushButton(centralwidget);
+        CompileAICode->setObjectName(QString::fromUtf8("CompileAICode"));
+        CompileAICode->setGeometry(QRect(980, 510, 89, 24));
+        NextStep = new QPushButton(centralwidget);
+        NextStep->setObjectName(QString::fromUtf8("NextStep"));
+        NextStep->setGeometry(QRect(1100, 520, 89, 24));
+        CutIn = new QPushButton(centralwidget);
+        CutIn->setObjectName(QString::fromUtf8("CutIn"));
+        CutIn->setGeometry(QRect(1100, 550, 89, 24));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1419, 20));
+        menubar->setGeometry(QRect(0, 0, 1419, 22));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -82,6 +98,10 @@ public:
         SaveCode->setText(QCoreApplication::translate("MainWindow", "\344\277\235\345\255\230\344\273\243\347\240\201", nullptr));
         AIOptimize->setText(QCoreApplication::translate("MainWindow", "AI\344\274\230\345\214\226", nullptr));
         TryToCompile->setText(QCoreApplication::translate("MainWindow", "\347\274\226\350\257\221\346\243\200\346\237\245", nullptr));
+        TryExecute->setText(QCoreApplication::translate("MainWindow", "\346\211\247\350\241\214\344\274\230\345\214\226\347\273\223\346\236\234", nullptr));
+        CompileAICode->setText(QCoreApplication::translate("MainWindow", "\347\274\226\350\257\221AI\344\273\243\347\240\201", nullptr));
+        NextStep->setText(QCoreApplication::translate("MainWindow", "\344\270\213\344\270\200\346\255\245", nullptr));
+        CutIn->setText(QCoreApplication::translate("MainWindow", "\347\273\210\346\255\242\350\277\220\350\241\214", nullptr));
     } // retranslateUi
 
 };

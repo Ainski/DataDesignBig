@@ -24,4 +24,8 @@ protected:
     CodeHighLighter *thehighlighter;
     Ui::MainWindow *ui;
 };
+const QString UserInput="code.cpp";
+const QString UserExe="code.exe";
+const QString AIoutput="output.cpp";
+const QString AIExe="output.exe";
 #endif // MAINWINDOW_H

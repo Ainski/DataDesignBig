@@ -48,8 +48,8 @@
      <rect>
       <x>858</x>
       <y>585</y>
-      <width>256</width>
-      <height>192</height>
+      <width>541</width>
+      <height>281</height>
      </rect>
     </property>
     <property name="readOnly">
@@ -98,14 +98,53 @@
    <widget class="QPushButton" name="TryExecute">
     <property name="geometry">
      <rect>
-      <x>990</x>
+      <x>980</x>
+      <y>540</y>
+      <width>89</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>执行优化结果</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="CompileAICode">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
       <y>510</y>
       <width>89</width>
       <height>24</height>
      </rect>
     </property>
     <property name="text">
-     <string>尝试执行</string>
+     <string>编译AI代码</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="NextStep">
+    <property name="geometry">
+     <rect>
+      <x>1100</x>
+      <y>520</y>
+      <width>89</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>下一步</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="CutIn">
+    <property name="geometry">
+     <rect>
+      <x>1100</x>
+      <y>550</y>
+      <width>89</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>终止运行</string>
     </property>
    </widget>
   </widget>
@@ -115,7 +154,7 @@
      <x>0</x>
      <y>0</y>
      <width>1419</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
