@@ -1,5 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QMenuBar>
+#include <QAction>
+#include <QDir>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -13,6 +18,57 @@ MainWindow::MainWindow(QWidget *parent)
     thehighlighter->setDocument(ui->CodeEditorUut->document());
 
     Tools tool;
+    // 图形视图：放置在左上空白区，便于调试（挂到 centralwidget 上，避免被覆盖）
+    graphView = new GraphView(ui->centralwidget);
+    graphView->setGeometry(QRect(20, 20, 801, 450));
+    graphView->setObjectName("GraphView");
+    graphView->setStyleSheet("background:#ffffff;border:1px solid #999;");
+    graphView->setVisible(true);
+    graphView->raise();
+
+    // 文件监视器：自动重载图文件（默认 map.txt）
+    fileWatcher = new QFileSystemWatcher(this);
+    auto resolveGraphPath = [] (const QString &name) -> QString {
+        // 候选路径列表：当前工作目录、可执行目录、常见相对目录
+        QStringList candidates;
+        candidates << QDir::cleanPath(QDir::current().absoluteFilePath(QStringLiteral("../graphic_tree/") + name));
+        for (const QString &p : candidates) {
+            if (QFileInfo::exists(p)) {
+                qDebug() << "找到文件路径:" << p;
+                return p;
+            }
+            qDebug() << "尝试路径" << p << "未找到文件";
+        }
+        qDebug() << "所有路径都未找到文件";
+        return QString();
+    };
+    auto tryWatchFile = [this, resolveGraphPath](const QString &path){
+        if (path.isEmpty()) return;
+        QString real = path;
+        if (!QFileInfo::exists(real)) real = resolveGraphPath(path);
+        if (real.isEmpty() || !QFileInfo::exists(real)) return;
+        graphView->loadFromFile(real);
+        // 重新添加监视（某些编辑器会导致文件句柄变化）
+        const QStringList watching = fileWatcher->files();
+        if (!watching.isEmpty()) fileWatcher->removePaths(watching);
+        fileWatcher->addPath(real);
+    };
+    tryWatchFile("map.txt");
+    connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, [this, tryWatchFile](const QString &p){
+        tryWatchFile(p);
+    });
+
+    // 菜单：手动打开图文件，便于调试
+    QMenu *graphMenu = menuBar()->addMenu(tr("图形"));
+    QAction *openGraphAct = graphMenu->addAction(tr("打开图文件..."));
+    connect(openGraphAct, &QAction::triggered, this, [this, tryWatchFile](){
+        const QString f = QFileDialog::getOpenFileName(this, tr("选择图文件"), QDir::currentPath(), tr("Text Files (*.txt);;All Files (*.*)"));
+        if (!f.isEmpty()) {
+            tryWatchFile(f);
+        }
+    });
+
+    Tools tool(ui->CompileResult);
     tool.creatlog(logfile);
     files.push_back(logfile);
 

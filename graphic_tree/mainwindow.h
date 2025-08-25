@@ -7,6 +7,8 @@
 #include "status.h"
 #include "resultshower.h"
 #include "tools.h"
+#include "graphview.h"
+#include <QFileSystemWatcher>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -23,6 +25,8 @@ protected:
     QVector<QString> files;
     CodeHighLighter *thehighlighter;
     Ui::MainWindow *ui;
+    GraphView *graphView;
+    QFileSystemWatcher *fileWatcher;
 };
 const QString UserInput="code.cpp";
 const QString UserExe="code.exe";

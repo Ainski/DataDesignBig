@@ -22,7 +22,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     resultshower.cpp \
-    tools.cpp
+    tools.cpp \
+    graphview.cpp
 
 HEADERS += \
     codeeditor.h \
@@ -30,7 +31,8 @@ HEADERS += \
     mainwindow.h \
     resultshower.h \
     status.h \
-    tools.h
+    tools.h \
+    graphview.h
 
 FORMS += \
     mainwindow.ui
