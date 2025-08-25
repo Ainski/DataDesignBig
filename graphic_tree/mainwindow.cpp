@@ -30,15 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     auto resolveGraphPath = [] (const QString &name) -> QString {
         // 候选路径列表：当前工作目录、可执行目录、常见相对目录
         QStringList candidates;
-        candidates << name;
-        candidates << QDir::current().absoluteFilePath(name);
-        candidates << QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(name);
-        candidates << QDir::cleanPath(QDir::current().absoluteFilePath(QStringLiteral("graphic_tree/") + name));
         candidates << QDir::cleanPath(QDir::current().absoluteFilePath(QStringLiteral("../graphic_tree/") + name));
-        candidates << QDir::cleanPath(QDir::current().absoluteFilePath(QStringLiteral("../../graphic_tree/") + name));
-        candidates << QDir::cleanPath(QDir::current().absoluteFilePath(QStringLiteral("../") + name));
-        candidates << QDir::cleanPath(QDir::current().absoluteFilePath(QStringLiteral("../../") + name));
-        candidates << QDir::cleanPath(QDir::current().absoluteFilePath(QStringLiteral("./") + name));
         for (const QString &p : candidates) {
             if (QFileInfo::exists(p)) {
                 qDebug() << "找到文件路径:" << p;
