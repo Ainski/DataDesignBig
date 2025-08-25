@@ -1,0 +1,11 @@
+*.user
+build-*/
+*/debug/
+*/release/
+*.log
+.vscode/
+main/config.py
+*.pro.user
+*.o
+*.exe
+*.so
