@@ -453,10 +453,100 @@ Status deleteFile(const QString &filePath) {
 }
 Status Tools::ExecuteResult(const QString &filename,QPushButton* const &TryExecute)
 {
-    QProcess *process=new QProcess();
-    process->setProgram(filename);
-    process->
+    QString exePath = filename;
+    if (!QFileInfo::exists(exePath)) {
+        exePath = QDir::current().absoluteFilePath(filename);
+    }
+    if (!QFileInfo::exists(exePath)) {
+        logMessage(QString("可执行文件不存在: ") + filename);
+        return Status::FILE_OPEN_WRONG;
+    }
 
+    QFile logFile(logfile);
+    if (!logFile.open(QIODevice::Append | QIODevice::Text)) {
+        qWarning() << "Cannot open log file:" << logfile;
+        return Status::FILE_OPEN_WRONG;
+    }
+    QTextStream logStream(&logFile);
+
+    if (TryExecute) {
+        TryExecute->setEnabled(false);
+        TryExecute->setText("正在执行...");
+    }
+    logStream << QString('\n') << QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")
+              << "Start execute: " << exePath;
+    logStream.flush();
+
+    QProcess process;
+    process.setProgram(exePath);
+    process.setProcessChannelMode(QProcess::MergedChannels);
+
+    QObject::connect(&process, &QProcess::readyReadStandardOutput, [&](){
+        logStream << process.readAllStandardOutput();
+        logStream.flush();
+    });
+
+    QEventLoop loop;
+    QTimer timeoutTimer;
+    timeoutTimer.setSingleShot(true);
+    QObject::connect(&process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), &loop, &QEventLoop::quit);
+    QObject::connect(&timeoutTimer, &QTimer::timeout, [&](){
+        if (process.state() == QProcess::Running) {
+            process.kill();
+            logStream << QString('\n') << QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")
+                      << "Execution timed out after 30 seconds";
+            logStream.flush();
+            loop.quit();
+        }
+    });
+
+    process.start();
+    if (!process.waitForStarted()) {
+        logStream << QString('\n') << QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")
+                  << "Failed to start: " << exePath;
+        logFile.close();
+        if (TryExecute) {
+            TryExecute->setEnabled(true);
+            TryExecute->setText("尝试执行");
+        }
+        return Status::COMPILE_ERROR;
+    }
+
+    timeoutTimer.start(30000);
+    loop.exec();
+    const bool timedOut = !timeoutTimer.isActive();
+    timeoutTimer.stop();
+
+    if (timedOut) {
+        logFile.close();
+        if (TryExecute) {
+            TryExecute->setEnabled(true);
+            TryExecute->setText("尝试执行");
+        }
+        return Status::COMPILE_ERROR;
+    }
+
+    const int exitCode = process.exitCode();
+    const QProcess::ExitStatus exitStatus = process.exitStatus();
+
+    if (exitStatus != QProcess::NormalExit || exitCode != 0) {
+        logStream << QString('\n') << QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")
+                  << "Execution failed. Exit code: " << exitCode;
+        logFile.close();
+        if (TryExecute) {
+            TryExecute->setEnabled(true);
+            TryExecute->setText("尝试执行");
+        }
+        return Status::COMPILE_ERROR;
+    }
+
+    logStream << QString('\n') << QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ")
+              << "Execution successful.";
+    logFile.close();
+
+    if (TryExecute) {
+        TryExecute->setEnabled(true);
+        TryExecute->setText("尝试执行");
+    }
     return Status::OK;
-
 }

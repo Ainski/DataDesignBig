@@ -5,5 +5,3 @@ build-*/
 *.log
 .vscode/**
 main/config.py
-
-

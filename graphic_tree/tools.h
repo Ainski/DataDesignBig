@@ -20,6 +20,7 @@
 #include <QEventLoop>
 #include <QTimer>
 #include <QSslSocket>
+#include <QPushButton>
 static const QString API_KEY = "sk-6df6f3dfb34a4d5bb35b6c454be9b300"; // 替换为实际API密钥
 static const QString API_URL = "https://api.deepseek.com/v1/chat/completions";
 class Tools
